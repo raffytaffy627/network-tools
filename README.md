@@ -9,6 +9,7 @@ Small Python networking utilities I'm building while studying networking and wor
 | [dns-lookup](dns-lookup/) | Resolves a domain name to its IPv4 address | Windows, Linux, macOS |
 | [port-scanner](port-scanner/) | Checks whether common ports (FTP, SSH, HTTP, HTTPS, RDP) are open on a host | Windows, Linux, macOS |
 | [subnet-calculator](subnet-calculator/) | Breaks down any IPv4 subnet: network, broadcast, masks, host range, and host count | Windows, Linux, macOS |
+| [uptime-monitor](uptime-monitor/) | Pings hosts on a schedule, shows live UP/DOWN status and latency, and logs results to CSV | Windows, Linux |
 | [device-fingerprint](device-fingerprint/) | Ping-sweeps a /24 subnet, grabs the MAC address of every live device, and saves the results to a file | Linux |
 
 ## Getting started
@@ -87,6 +88,24 @@ Enter an IPv4 address with CIDR (e.g. 192.168.1.0/24): 192.168.1.57/26
 
 It also handles the edge cases correctly: a `/31` is treated as a point-to-point link (both addresses usable, no broadcast), and a `/32` as a single host.
 
+## Uptime Monitor
+
+```bash
+python3 uptime-monitor/uptime_monitor.py
+```
+
+Example output:
+
+```
+[2026-09-18 03:42:12]
+  UP    8.8.8.8         11 ms
+  UP    1.1.1.1         11 ms
+  UP    github.com      46 ms
+  DOWN  10.255.255.1    no reply
+```
+
+Press Ctrl+C to stop and get an uptime percentage for each host. Every result is logged to `uptime_log.csv`.
+
 ## Device Fingerprint (Linux)
 
 Pass the first three parts of your network's IP range. If you leave it out, it defaults to `192.168.4`.
@@ -113,10 +132,11 @@ Results saved to scan_results.txt
 - How DNS turns a domain name into an IP address (`socket.gethostbyname`)
 - How a TCP connect scan works, and why timeouts matter (`socket.connect_ex`)
 - Subnetting math, including why `/31` and `/32` break the "subtract 2" rule (`ipaddress`)
+- Running system commands cross-platform, parsing output with regular expressions, and logging to CSV (`subprocess`, `re`, `csv`)
 - Ping sweeps, the ARP/neighbor table, and running system commands from Python (`subprocess`)
 
 ## Roadmap
 
 - [x] Subnet calculator
-- [ ] Uptime / latency monitor
+- [x] Uptime / latency monitor
 - [ ] Windows support for device-fingerprint
