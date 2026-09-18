@@ -8,6 +8,7 @@ Small Python networking utilities I'm building while studying networking and wor
 |------|--------------|---------|
 | [dns-lookup](dns-lookup/) | Resolves a domain name to its IPv4 address | Windows, Linux, macOS |
 | [port-scanner](port-scanner/) | Checks whether common ports (FTP, SSH, HTTP, HTTPS, RDP) are open on a host | Windows, Linux, macOS |
+| [subnet-calculator](subnet-calculator/) | Breaks down any IPv4 subnet: network, broadcast, masks, host range, and host count | Windows, Linux, macOS |
 | [device-fingerprint](device-fingerprint/) | Ping-sweeps a /24 subnet, grabs the MAC address of every live device, and saves the results to a file | Linux |
 
 ## Getting started
@@ -33,7 +34,7 @@ Example output:
 DNS Lookup Tool — type 'quit' to exit
 
 Enter a website (e.g. google.com): github.com
-github.com resolves to 140.82.113.4
+github.com resolves to 140.82.114.4
 
 Enter a website (e.g. google.com): quit
 Goodbye!
@@ -61,6 +62,31 @@ Port 3389 (RDP) is closed
 
 > Only scan devices and networks you own or have permission to test.
 
+## Subnet Calculator
+
+Enter any IPv4 address with a CIDR prefix. It doesn't have to be the network address; the tool works out which subnet the IP belongs to.
+
+```bash
+python3 subnet-calculator/subnet_calculator.py
+```
+
+Example output:
+
+```
+Enter an IPv4 address with CIDR (e.g. 192.168.1.0/24): 192.168.1.57/26
+
+  Network address:   192.168.1.0/26
+  Subnet mask:       255.255.255.192
+  Wildcard mask:     0.0.0.63
+  Broadcast address: 192.168.1.63
+  Usable host range: 192.168.1.1 - 192.168.1.62
+  Total addresses:   64
+  Usable hosts:      62
+  Type:              Private
+```
+
+It also handles the edge cases correctly: a `/31` is treated as a point-to-point link (both addresses usable, no broadcast), and a `/32` as a single host.
+
 ## Device Fingerprint (Linux)
 
 Pass the first three parts of your network's IP range. If you leave it out, it defaults to `192.168.4`.
@@ -86,10 +112,11 @@ Results saved to scan_results.txt
 
 - How DNS turns a domain name into an IP address (`socket.gethostbyname`)
 - How a TCP connect scan works, and why timeouts matter (`socket.connect_ex`)
+- Subnetting math, including why `/31` and `/32` break the "subtract 2" rule (`ipaddress`)
 - Ping sweeps, the ARP/neighbor table, and running system commands from Python (`subprocess`)
 
 ## Roadmap
 
-- [ ] Subnet calculator
+- [x] Subnet calculator
 - [ ] Uptime / latency monitor
 - [ ] Windows support for device-fingerprint
